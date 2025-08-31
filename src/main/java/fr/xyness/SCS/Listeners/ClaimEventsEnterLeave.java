@@ -70,6 +70,7 @@ public class ClaimEventsEnterLeave implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+		if(event.getPlayer().getLocation().getBlockY() <= 63) return;
         Player player = event.getPlayer();
         instance.getPlayerMain().addPlayerPermSetting(player);
         instance.getPlayerMain().checkPlayer(player);
@@ -107,6 +108,7 @@ public class ClaimEventsEnterLeave implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+		if(event.getPlayer().getLocation().getBlockY() <= 63) return;
         Player player = event.getPlayer();
         player.resetPlayerWeather();
         instance.getPlayerMain().removeCPlayer(player.getUniqueId());
@@ -121,6 +123,7 @@ public class ClaimEventsEnterLeave implements Listener {
      */
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
+		if(event.getPlayer().getLocation().getBlockY() <= 63) return;
         Player player = event.getPlayer();
         
         Chunk to = event.getRespawnLocation().getChunk();
@@ -158,6 +161,7 @@ public class ClaimEventsEnterLeave implements Listener {
     @EventHandler
     public void onVehicleMove(VehicleMoveEvent event) {
     	if (!hasChangedChunk(event)) return;
+		if(event.getVehicle().getLocation().getBlockY() <= 63) return;
     	Vehicle vehicle = event.getVehicle();
     	if(vehicle == null) return;
         if (vehicle instanceof Boat || vehicle instanceof Minecart) {
@@ -268,6 +272,7 @@ public class ClaimEventsEnterLeave implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if (!hasChangedChunk(event)) return;
+		if(event.getPlayer().getLocation().getBlockY() <= 63) return;
 
         Chunk to = event.getTo().getChunk();
         Chunk from = event.getFrom().getChunk();
@@ -389,6 +394,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param chunk  The chunk.
      */
     private void handleWeatherSettings(Player player, Chunk to, Chunk from) {
+		if(player.getLocation().getBlockY() <= 63) return;
     	Claim claimTo = instance.getMain().getClaim(to);
     	Claim claimFrom = instance.getMain().getClaim(from);
         if (instance.getMain().checkIfClaimExists(to) && !claimTo.getPermissionForPlayer("Weather",player)) {
@@ -407,6 +413,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param owner   The owner of the chunk.
      */
     private void handleAutoFly(Player player, CPlayer cPlayer, Chunk chunk, String owner) {
+		if(player.getLocation().getBlockY() <= 63) return;
     	Claim claim = instance.getMain().getClaim(chunk);
         if (cPlayer.getClaimAutofly() && (owner.equals(player.getName()) || claim != null && claim.getPermissionForPlayer("Fly", player)) && !instance.isFolia()) {
             instance.getPlayerMain().activePlayerFly(player);
@@ -430,6 +437,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param world The world name.
      */
     private void handleAutoDelChunk(Player player, CPlayer cPlayer, Chunk chunk, String world) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getWorldMode(world) == WorldMode.DISABLED) {
             player.sendMessage(instance.getLanguage().getMessage("autodelchunk-world-disabled").replace("%world%", world));
             cPlayer.setClaimAuto("");
@@ -475,6 +483,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param world The world name.
      */
     private void handleAutoAddChunk(Player player, CPlayer cPlayer, Chunk chunk, String world) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getWorldMode(world) == WorldMode.DISABLED) {
             player.sendMessage(instance.getLanguage().getMessage("autoaddchunk-world-disabled").replace("%world%", world));
             cPlayer.setClaimAuto("");
@@ -572,6 +581,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param world The world name.
      */
     private void handleAutoUnclaim(Player player, CPlayer cPlayer, Chunk chunk, String world) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getWorldMode(world) == WorldMode.DISABLED) {
             player.sendMessage(instance.getLanguage().getMessage("autounclaim-world-disabled").replace("%world%", world));
             cPlayer.setClaimAuto("");
@@ -630,6 +640,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param world The world name.
      */
     private void handleAutoClaim(Player player, CPlayer cPlayer, Chunk chunk, String world) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getWorldMode(world) == WorldMode.DISABLED) {
             player.sendMessage(instance.getLanguage().getMessage("autoclaim-world-disabled").replace("%world%", world));
             cPlayer.setClaimAuto("");
@@ -694,6 +705,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param world The world name.
      */
     private void handleAutoMap(Player player, CPlayer cPlayer, Chunk chunk, String world) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getWorldMode(world) == WorldMode.DISABLED) {
             player.sendMessage(instance.getLanguage().getMessage("automap-world-disabled").replace("%world%", world));
             cPlayer.setClaimAutomap(false);
@@ -712,6 +724,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param ownerFROM The owner of the chunk the player is moving from.
      */
     private void handleEnterLeaveMessages(Player player, Chunk to, Chunk from, String ownerTO, String ownerFROM) {
+		if(player.getLocation().getBlockY() <= 63) return;
         if (instance.getSettings().getBooleanSetting("enter-leave-messages")) {
             enterleaveMessages(player, to, from, ownerTO, ownerFROM);
         }
@@ -733,6 +746,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param ownerFROM the owner of the chunk the player is leaving.
      */
     private void enterleaveChatMessages(Player player, Chunk to, Chunk from, String ownerTO, String ownerFROM) {
+		if(player.getLocation().getBlockY() <= 63) return;
         String playerName = player.getName();
         String toName = instance.getMain().getClaimNameByChunk(to);
         String fromName = instance.getMain().getClaimNameByChunk(from);
@@ -787,6 +801,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param ownerFROM the owner of the chunk the player is leaving.
      */
     private void enterleaveMessages(Player player, Chunk to, Chunk from, String ownerTO, String ownerFROM) {
+		if(player.getLocation().getBlockY() <= 63) return;
         String playerName = player.getName();
         String toName = instance.getMain().getClaimNameByChunk(to);
         String fromName = instance.getMain().getClaimNameByChunk(from);
@@ -839,6 +854,7 @@ public class ClaimEventsEnterLeave implements Listener {
      * @param ownerFROM the owner of the chunk the player is leaving.
      */
     private void enterleavetitleMessages(Player player, Chunk to, Chunk from, String ownerTO, String ownerFROM) {
+		if(player.getLocation().getBlockY() <= 63) return;
         String toName = instance.getMain().getClaimNameByChunk(to);
         String fromName = instance.getMain().getClaimNameByChunk(from);
         String playerName = player.getName();
