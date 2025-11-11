@@ -87,18 +87,21 @@ public class ClaimEventsEnterLeave implements Listener {
         
         if (!instance.getMain().checkIfClaimExists(chunk)) return;
         
-        Claim claim = instance.getMain().getClaim(chunk);
-        if (instance.getMain().checkBan(claim, player) && !instance.getPlayerMain().checkPermPlayer(player, "scs.bypass.ban")) {
-        	instance.executeAsyncLater(() -> instance.getMain().teleportPlayerToExpulsion(player), 250);
-            return;
-        }
-        
-        if (!claim.getPermissionForPlayer("Enter",player) && !instance.getPlayerMain().checkPermPlayer(player, "scs.bypass.enter")) {
-        	instance.executeAsyncLater(() -> instance.getMain().teleportPlayerToExpulsion(player), 250);
-            return;
-        }
-        
-        instance.getBossBars().activeBossBar(player,chunk);
+        instance.executeSyncLater(() -> {
+            Claim claim = instance.getMain().getClaim(chunk);
+            if (instance.getMain().checkBan(claim, player) && !instance.getPlayerMain().checkPermPlayer(player, "scs.bypass.ban")) {
+            	instance.executeAsyncLater(() -> instance.getMain().teleportPlayerToExpulsion(player), 250);
+                return;
+            }
+            
+            if (!claim.getPermissionForPlayer("Enter",player) && !instance.getPlayerMain().checkPermPlayer(player, "scs.bypass.enter")) {
+            	instance.executeAsyncLater(() -> instance.getMain().teleportPlayerToExpulsion(player), 250);
+                return;
+            }
+            
+            instance.getBossBars().activeBossBar(player,chunk);
+        }, 100);
+
     }
 
     /**
@@ -488,6 +491,10 @@ public class ClaimEventsEnterLeave implements Listener {
             player.sendMessage(instance.getLanguage().getMessage("autoaddchunk-world-disabled").replace("%world%", world));
             cPlayer.setClaimAuto("");
         } else {
+            if (instance.getSettings().getBooleanSetting("worldguard") && !instance.getWorldGuard().checkFlagClaim(player)) {
+                player.sendMessage(instance.getLanguage().getMessage("worldguard-cannot-claim-in-region"));
+                return;
+            }
         	String playerName = player.getName();
         	Claim claim = cPlayer.getTargetClaimChunk();
         	if(claim == null) return;
@@ -646,6 +653,12 @@ public class ClaimEventsEnterLeave implements Listener {
             cPlayer.setClaimAuto("");
         } else {
         	String playerName = player.getName();
+        	
+            if (instance.getSettings().getBooleanSetting("worldguard") && !instance.getWorldGuard().checkFlagClaim(player)) {
+                player.sendMessage(instance.getLanguage().getMessage("worldguard-cannot-claim-in-region"));
+                return;
+            }
+        	
         	// Check if the chunk is already claimed
             if (instance.getMain().checkIfClaimExists(chunk)) {
             	instance.getMain().handleClaimConflict(player, chunk);
@@ -781,8 +794,8 @@ public class ClaimEventsEnterLeave implements Listener {
 
         if (instance.getMain().checkIfClaimExists(from)) {
             String message = ownerFROM.equals("*")
-                    ? instance.getLanguage().getMessage("leave-protected-area").replace("%name%", fromName)
-                    : instance.getLanguage().getMessage("leave-territory")
+                    ? instance.getLanguage().getMessage("leave-protected-area-chat").replace("%name%", fromName)
+                    : instance.getLanguage().getMessage("leave-territory-chat")
                       .replace("%owner%", ownerFROM)
                       .replace("%player%", playerName)
                       .replace("%name%", fromName);
